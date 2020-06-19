@@ -5,14 +5,18 @@ import java.util.Random;
 
 import javax.inject.Inject;
 
-import org.edu.dao.IF_SampleMapper;
+import org.edu.dao.IF_SampleDAO;
+import org.edu.service.IF_SampleService;
+import org.edu.service.SampleServiceImpl;
 import org.edu.vo.MemberVO;
 // import org.edu.dao.SampleSelectProvider;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.web.WebAppConfiguration;
 
+@WebAppConfiguration//JUnit과 AOP동시 사용 에러 처리를 위함
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations ={"file:src/main/webapp/WEB-INF/spring/**/*.xml"})
 public class SampleMapperTest {
@@ -37,31 +41,34 @@ public class SampleMapperTest {
 	
 	// interface 로 Mybatis 쿼리 사용 DI처리(Dependency Injection)
 	@Inject
-	private IF_SampleMapper mapper; //인터페이스를 실행가능하게 mapper 실행변수로 지정.
+	private IF_SampleDAO mapper; //인터페이스를 실행가능하게 mapper 실행변수로 지정.
 	//클래스 실행변수로 사용시 =>IF_SampleMapper mapper = new IF_SampleMapper();
+	@Inject
+	private IF_SampleService sampleService;
 	
 	@Test
-	public void testInsertMember() {
+	public void testInsertMember() throws Exception {
 		/*int vRandom = 0;
 		Random ran = new Random();
 		vRandom = ran.nextInt();
 		*/
 		java.text.SimpleDateFormat formatter = new java.text.SimpleDateFormat("yyyyMMddHHmmss");
 		String today= formatter.format(new java.util.Date());
-		System.out.println("위쪽은 입력 전 리스트입니다.");
+		//testSelectMember();
+		//System.out.println("위쪽은 입력 전 리스트입니다.");
 		MemberVO vo = new MemberVO(); 
-		vo.setUserid("user"+ today);
+		vo.setUserid("user_"+ today);
 		vo.setUserpw("1234");
 		vo.setUsername("각시탈");
 		vo.setEmail("user13@test.com");
-		mapper.insertMember(vo);
-		System.out.println("아래쪽은 입력 후 리스트입니다.");
-		testSelectMember();
+		sampleService.insertMember(vo);
+		//System.out.println("아래쪽은 입력 후 리스트입니다.");
+		//testSelectMember();
 	}
 	@Test
 	public void testSelectMember() {
 		List<MemberVO> list = mapper.selectMember();
-		int cnt = 1;
+		/*int cnt = 1;
 		for(MemberVO vo:list) {
 			System.out.println(
 					"번호: " + cnt++ + "번 " +
@@ -70,13 +77,13 @@ public class SampleMapperTest {
 					" 이름: " + vo.getUsername() +
 					" 이메일: " + vo.getEmail()
 					);
-		}
+		}*/
 	}
 	
 	@Test
 	public void testUpdateMember() {
-		testSelectMember();
-		System.out.println("위에서 수정 전 이름을 확인하세요");
+		//testSelectMember();
+		//System.out.println("위에서 수정 전 이름을 확인하세요");
 		
 		MemberVO vo = new MemberVO();
 		//수정은 여러 개의 변수 값을 변경하기 때문에 MemberVO 클래스 변수를 매개변수로 사용한다.
@@ -86,15 +93,15 @@ public class SampleMapperTest {
 		vo.setEmail("sunshine@shine.com");
 		mapper.updateMember(vo);
 		
-		System.out.println("아래는 수정 후 이름을 확인하세요 ");
-		testSelectMember();
+		//System.out.println("아래는 수정 후 이름을 확인하세요 ");
+		//testSelectMember();
 	}
 	@Test
 	public void testDeleteMember() {
-		testSelectMember();
+		//testSelectMember();
 		mapper.deleteMember("user2");
-		System.out.println("아래는 지운 후 회원리스트");
-		testSelectMember();
+		//System.out.println("아래는 지운 후 회원리스트");
+		//testSelectMember();
 	}
 	
 	//DB연동방식1
